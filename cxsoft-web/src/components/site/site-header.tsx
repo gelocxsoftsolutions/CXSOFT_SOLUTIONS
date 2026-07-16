@@ -113,11 +113,19 @@ function Logo({ className }: { className?: string }) {
       <Image
         src="/cxsoftlogo.png"
         alt="CXSOFT SOLUTIONS"
-        width={120}
+        width={36}
         height={36}
         className="h-9 w-auto object-contain"
         priority
       />
+      <div className="leading-tight">
+        <div className="text-sm font-bold tracking-wide text-white">
+          CXSOFT
+        </div>
+        <div className="text-xs font-semibold tracking-widest text-white/70">
+          SOLUTIONS
+        </div>
+      </div>
     </div>
   );
 }

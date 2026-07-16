@@ -3,6 +3,7 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 
+import { SiteFooter } from "~/components/site/site-footer";
 import { SiteHeader } from "~/components/site/site-header";
 import { QuoteForm } from "~/components/quote/quote-form";
 import { Container, Section } from "~/components/ui/container";
@@ -20,8 +21,8 @@ export default function QuotePage() {
         </div>
 
         <Container className="relative">
-          <div className="grid items-start gap-10 py-10 lg:grid-cols-2 lg:py-14">
-            <div className="max-w-xl">
+          <div className="grid items-start gap-10 py-10 lg:grid-cols-[1fr_1.1fr] lg:py-14">
+            <div className="max-w-[520px]">
               <motion.h1
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -74,7 +75,7 @@ export default function QuotePage() {
               </div>
             </div>
 
-            <div className="lg:justify-self-end">
+            <div>
               <QuoteForm />
             </div>
           </div>
@@ -159,6 +160,8 @@ export default function QuotePage() {
           </div>
         </Container>
       </Section>
+
+      <SiteFooter />
     </main>
   );
 }

@@ -4,8 +4,9 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 
 export const metadata: Metadata = {
-  title: "CXSOFT SOLUTIONS",
-  description: "Software that powers your business.",
+  title: "CXSOFT SOLUTIONS — Custom Software Development Philippines",
+  description:
+    "We build custom web apps, mobile apps, POS systems, and business automation tools for Philippine businesses. Get a free quote today.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 

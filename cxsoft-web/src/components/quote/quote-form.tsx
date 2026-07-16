@@ -153,33 +153,34 @@ export function QuoteForm() {
   }
 
   return (
-    <div id="quote-form" className="w-full max-w-[560px]">
-      <div className="h-[640px] overflow-hidden rounded-3xl bg-white/4 ring-1 ring-inset ring-white/12 shadow-2xl shadow-black/30 backdrop-blur-xl sm:h-[720px]">
-        <div className="flex h-full flex-col px-6 pb-6 pt-6">
+    <div id="quote-form" className="w-full">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-white/[0.07] to-white/[0.02] ring-1 ring-inset ring-white/15 shadow-2xl shadow-black/40 backdrop-blur-2xl">
+        <div className="pointer-events-none absolute inset-0 rounded-3xl bg-[radial-gradient(ellipse_at_top_right,rgba(56,189,248,0.12),transparent_60%)]" />
+        <div className="pointer-events-none absolute inset-0 rounded-3xl bg-[radial-gradient(ellipse_at_bottom_left,rgba(99,102,241,0.08),transparent_60%)]" />
+
+        <div className="relative flex min-h-[600px] flex-col px-5 pb-5 pt-5">
           {submitted ? (
             <SuccessCard />
           ) : (
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-1 flex-col gap-4 min-h-0"
+              className="flex flex-1 flex-col gap-4"
             >
-              <div className="scrollbar-cx scrollbar-gutter-stable flex-1 min-h-0 overflow-y-scroll rounded-2xl">
-                <FormProgressHeader
-                  title={activeStep.label}
-                  stepIndex={stepIndex}
-                  totalSteps={steps.length}
-                  progress={progress}
-                />
+              <StepIndicator
+                current={stepIndex}
+                total={steps.length}
+                label={activeStep.label}
+              />
 
-                <div className="mt-4 pb-4">
+              <div className="scrollbar-cx scrollbar-gutter-stable flex-1 overflow-y-auto rounded-2xl">
+                <div className="min-h-[360px]">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={activeStep.key}
-                      initial={{ opacity: 0, y: 10 }}
+                      initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.22, ease: "easeOut" }}
-                      className="space-y-4"
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.25, ease: "easeOut" }}
                     >
                       {activeStep.key === "client" && <StepClient form={form} />}
                       {activeStep.key === "projectType" && (
@@ -209,7 +210,7 @@ export function QuoteForm() {
                 </div>
               ) : null}
 
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center justify-between gap-3 pt-1">
                 <Button
                   variant="ghost"
                   size="md"
@@ -217,7 +218,7 @@ export function QuoteForm() {
                   onClick={goBack}
                   disabled={stepIndex === 0 || form.formState.isSubmitting}
                 >
-                  Back
+                  ← Back
                 </Button>
 
                 {stepIndex < steps.length - 1 ? (
@@ -227,8 +228,21 @@ export function QuoteForm() {
                     type="button"
                     onClick={goNext}
                     disabled={form.formState.isSubmitting}
+                    className="group"
                   >
-                    Next
+                    <span>Next</span>
+                    <svg
+                      aria-hidden="true"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      className="ml-1.5 h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
                   </Button>
                 ) : (
                   <Button
@@ -236,8 +250,49 @@ export function QuoteForm() {
                     size="md"
                     type="submit"
                     disabled={form.formState.isSubmitting}
+                    className="group"
                   >
-                    {form.formState.isSubmitting ? "Requesting..." : "Request Quote"}
+                    {form.formState.isSubmitting ? (
+                      <>
+                        <svg
+                          aria-hidden="true"
+                          className="mr-1.5 h-4 w-4 animate-spin"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                          />
+                        </svg>
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        Request Quote
+                        <svg
+                          aria-hidden="true"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          className="ml-1.5 h-4 w-4"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.704 5.29a.75.75 0 0 1 .006 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L3.29 8.99a.75.75 0 1 1 1.06-1.06l4.01 4.01 6.72-6.65a.75.75 0 0 1 1.06 0Z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </>
+                    )}
                   </Button>
                 )}
               </div>
@@ -245,6 +300,79 @@ export function QuoteForm() {
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function StepIndicator({
+  current,
+  total,
+  label,
+}: {
+  current: number;
+  total: number;
+  label: string;
+}) {
+  return (
+    <div className="rounded-2xl bg-white/[0.04] px-5 py-4 ring-1 ring-inset ring-white/[0.06]">
+      <div className="flex items-center justify-between">
+        {Array.from({ length: total }, (_, i) => (
+          <React.Fragment key={i}>
+            <motion.div
+              initial={false}
+              animate={
+                i < current
+                  ? { scale: 1, backgroundColor: "rgba(56,189,248,1)" }
+                  : i === current
+                    ? { scale: 1.1, backgroundColor: "rgba(56,189,248,0.15)" }
+                    : { scale: 1, backgroundColor: "rgba(255,255,255,0.06)" }
+              }
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className={cn(
+                "grid h-7 w-7 shrink-0 place-items-center rounded-full text-[11px] font-bold transition-shadow duration-300",
+                i < current && "bg-sky-500 text-white shadow-lg shadow-sky-500/30",
+                i === current &&
+                  "bg-sky-500/15 text-sky-200 ring-2 ring-sky-400/50 shadow-lg shadow-sky-500/20",
+                i > current && "bg-white/[0.06] text-white/40",
+              )}
+            >
+              {i < current ? (
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="h-3.5 w-3.5"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.704 5.29a.75.75 0 0 1 .006 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L3.29 8.99a.75.75 0 1 1 1.06-1.06l4.01 4.01 6.72-6.65a.75.75 0 0 1 1.06 0Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              ) : (
+                i + 1
+              )}
+            </motion.div>
+            {i < total - 1 ? (
+              <div
+                className={cn(
+                  "mx-1 h-0.5 flex-1 rounded-full transition-colors duration-300",
+                  i < current ? "bg-sky-500" : "bg-white/[0.06]",
+                )}
+              />
+            ) : null}
+          </React.Fragment>
+        ))}
+      </div>
+      <motion.div
+        key={label}
+        initial={{ opacity: 0, y: -4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+        className="mt-3 text-center text-sm font-semibold text-white/80"
+      >
+        {label}
+      </motion.div>
     </div>
   );
 }
@@ -257,8 +385,8 @@ function StepClient({ form }: { form: UseFormReturn<QuoteFormValues> }) {
   } = form;
 
   return (
-    <StepPanel size="tall">
-      <div className="grid gap-3 sm:grid-cols-2">
+    <StepPanel>
+      <div className="grid gap-4 sm:grid-cols-2">
         <Field
           label="Full Name"
           required
@@ -333,7 +461,7 @@ function StepProjectDescription({
   } = form;
 
   return (
-    <StepPanel size="tall">
+    <StepPanel>
       <Field
         label="Project Description"
         required
@@ -341,10 +469,10 @@ function StepProjectDescription({
         input={
           <textarea
             {...register("description")}
-            rows={10}
+            rows={9}
             className={cn(
               inputClass,
-              "min-h-[300px] resize-none break-words scrollbar-cx sm:min-h-[380px]",
+              "min-h-[300px] resize-none break-words scrollbar-cx",
             )}
             placeholder="Tell us what you want to build, who will use it, and the key goals."
           />
@@ -361,10 +489,7 @@ function StepProjectFeatures({ form }: { form: UseFormReturn<QuoteFormValues> })
 
   return (
     <StepPanel>
-      <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
-        Features Needed
-      </div>
-      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+      <div className="grid gap-1.5 sm:grid-cols-3">
         {featureSchema.options.map((f) => {
           const checked = features.includes(f);
           return (
@@ -378,27 +503,25 @@ function StepProjectFeatures({ form }: { form: UseFormReturn<QuoteFormValues> })
                 setValue("features", next, { shouldValidate: true });
               }}
               className={cn(
-                "group flex items-center justify-between gap-3 rounded-2xl bg-white/5 px-4 py-3 text-left ring-1 ring-inset ring-white/10 transition-all duration-200 hover:bg-white/10",
-                checked && "bg-white/10 ring-white/25",
+                "group flex items-center gap-2.5 rounded-lg bg-white/[0.04] px-3 py-2 text-left ring-1 ring-inset ring-white/[0.08] transition-all duration-200 hover:bg-white/[0.08] hover:ring-white/[0.15] active:scale-[0.98]",
+                checked && "bg-sky-500/10 ring-sky-400/25",
               )}
             >
-              <div className="flex min-w-0 items-center gap-3">
-                <span
-                  className={cn(
-                    "grid h-9 w-9 place-items-center rounded-xl bg-white/5 ring-1 ring-inset ring-white/10 transition-colors group-hover:bg-white/10",
-                    checked && "bg-sky-500/15 ring-sky-300/20",
-                  )}
-                >
-                  {checked ? (
-                    <MiniCheck className="h-4 w-4 text-sky-200" />
-                  ) : (
-                    <span className="h-4 w-4 rounded-md bg-white/5 ring-1 ring-inset ring-white/10" />
-                  )}
-                </span>
-                <span className="truncate text-sm font-semibold text-white/85 group-hover:text-white">
-                  {f}
-                </span>
-              </div>
+              <span
+                className={cn(
+                  "grid h-6 w-6 shrink-0 place-items-center rounded-md bg-white/[0.04] ring-1 ring-inset ring-white/[0.08] transition-colors group-hover:bg-white/[0.08]",
+                  checked && "bg-sky-500/20 ring-sky-300/20",
+                )}
+              >
+                {checked ? (
+                  <MiniCheck className="h-3 w-3 text-sky-200" />
+                ) : (
+                  <span className="h-3 w-3 rounded bg-white/[0.06] ring-1 ring-inset ring-white/[0.10]" />
+                )}
+              </span>
+              <span className="truncate text-xs font-medium leading-tight text-white/80 group-hover:text-white/95">
+                {f}
+              </span>
             </button>
           );
         })}
@@ -418,7 +541,7 @@ function ProjectTypePicker({ form }: { form: UseFormReturn<QuoteFormValues> }) {
 
   return (
     <div>
-      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+      <div className="grid gap-2 sm:grid-cols-2">
         {projectTypeSchema.options.map((type) => {
           const checked = projectType === type;
           return (
@@ -427,24 +550,24 @@ function ProjectTypePicker({ form }: { form: UseFormReturn<QuoteFormValues> }) {
               type="button"
               onClick={() => setValue("projectType", type, { shouldValidate: true })}
               className={cn(
-                "group flex items-center justify-between gap-3 rounded-2xl bg-white/5 px-4 py-4 text-left ring-1 ring-inset ring-white/10 transition-all duration-200 hover:bg-white/10",
-                checked && "bg-white/10 ring-white/25",
+                "group flex items-center justify-between gap-3 rounded-xl bg-white/[0.04] px-4 py-4 text-left ring-1 ring-inset ring-white/[0.08] transition-all duration-200 hover:bg-white/[0.08] hover:ring-white/[0.15] active:scale-[0.98]",
+                checked && "bg-sky-500/10 ring-sky-400/25",
               )}
             >
               <div className="flex min-w-0 items-center gap-3">
                 <span
                   className={cn(
-                    "grid h-10 w-10 place-items-center rounded-xl bg-white/5 ring-1 ring-inset ring-white/10 transition-colors group-hover:bg-white/10",
-                    checked && "bg-sky-500/15 ring-sky-300/20",
+                    "grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white/[0.04] ring-1 ring-inset ring-white/[0.08] transition-colors group-hover:bg-white/[0.08]",
+                    checked && "bg-sky-500/20 ring-sky-300/20",
                   )}
                 >
                   {checked ? (
                     <MiniCheck className="h-4 w-4 text-sky-200" />
                   ) : (
-                    <span className="h-4 w-4 rounded-md bg-white/5 ring-1 ring-inset ring-white/10" />
+                    <span className="h-4 w-4 rounded bg-white/[0.06] ring-1 ring-inset ring-white/[0.10]" />
                   )}
                 </span>
-                <span className="truncate text-sm font-semibold text-white/90">
+                <span className="truncate text-sm font-semibold text-white/85 group-hover:text-white">
                   {type}
                 </span>
               </div>
@@ -474,7 +597,7 @@ function StepBusiness({ form }: { form: UseFormReturn<QuoteFormValues> }) {
   return (
     <div className="space-y-4">
       <StepPanel>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           <Field
             label="Industry"
             error={errors.industry?.message}
@@ -510,25 +633,31 @@ function StepBusiness({ form }: { form: UseFormReturn<QuoteFormValues> }) {
         </div>
 
         {existing === "Yes" ? (
-          <div className="mt-4">
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="mt-4 overflow-hidden"
+          >
             <Field
               label="Existing System Problems"
               error={errors.existingSystemProblems?.message}
               input={
                 <textarea
                   {...register("existingSystemProblems")}
-                  rows={4}
+                  rows={3}
                   className={cn(inputClass, "resize-none scrollbar-cx")}
                   placeholder="What problems are you experiencing?"
                 />
               }
             />
-          </div>
+          </motion.div>
         ) : null}
       </StepPanel>
 
       <StepPanel>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           <Field
             label="Budget"
             error={errors.budget?.message}
@@ -584,7 +713,7 @@ function StepDesign({ form }: { form: UseFormReturn<QuoteFormValues> }) {
   return (
     <div className="space-y-4">
       <StepPanel>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           <Field
             label="Has Logo/Branding?"
             error={errors.hasBranding?.message}
@@ -623,18 +752,15 @@ function StepDesign({ form }: { form: UseFormReturn<QuoteFormValues> }) {
       </StepPanel>
 
       <StepPanel>
-        <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
-          Technical Needs
-        </div>
-        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <div className="grid gap-1.5 sm:grid-cols-3">
           {technicalNeedSchema.options.map((n) => {
             const checked = tech.includes(n);
             return (
               <label
                 key={n}
                 className={cn(
-                  "flex cursor-pointer items-center gap-3 rounded-xl bg-white/5 px-4 py-3 ring-1 ring-inset ring-white/10 transition-colors hover:bg-white/10",
-                  checked && "bg-white/10 ring-white/20",
+                  "flex cursor-pointer items-center gap-2 rounded-lg bg-white/[0.04] px-3 py-2.5 ring-1 ring-inset ring-white/[0.08] transition-all duration-200 hover:bg-white/[0.08] hover:ring-white/[0.15] active:scale-[0.98]",
+                  checked && "bg-sky-500/10 ring-sky-400/25",
                 )}
               >
                 <input
@@ -644,9 +770,9 @@ function StepDesign({ form }: { form: UseFormReturn<QuoteFormValues> }) {
                     const next = checked ? tech.filter((x) => x !== n) : [...tech, n];
                     setValue("technicalNeeds", next, { shouldValidate: true });
                   }}
-                  className="h-4 w-4 accent-sky-400"
+                  className="h-3.5 w-3.5 accent-sky-400"
                 />
-                <span className="text-sm font-medium text-white/85">{n}</span>
+                <span className="truncate text-xs font-medium leading-tight text-white/80">{n}</span>
               </label>
             );
           })}
@@ -654,10 +780,7 @@ function StepDesign({ form }: { form: UseFormReturn<QuoteFormValues> }) {
       </StepPanel>
 
       <StepPanel>
-        <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
-          File Upload
-        </div>
-        <div className="mt-3 rounded-2xl bg-white/5 p-4 ring-1 ring-inset ring-white/10">
+        <div className="rounded-xl bg-white/[0.03] p-4 ring-1 ring-inset ring-white/[0.06]">
           <input
             type="file"
             multiple
@@ -668,15 +791,17 @@ function StepDesign({ form }: { form: UseFormReturn<QuoteFormValues> }) {
                 : undefined;
               setValue("files", list, { shouldValidate: true });
             }}
-            className="block w-full text-sm text-white/70 file:mr-4 file:rounded-md file:border-0 file:bg-white/10 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-white/15"
+            className="block w-full text-sm text-white/70 file:mr-4 file:rounded-lg file:border-0 file:bg-sky-500/15 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-sky-200 file:ring-1 file:ring-inset file:ring-sky-300/20 hover:file:bg-sky-500/25"
           />
           {errors.files?.message ? (
             <div className="mt-2 text-xs font-medium text-rose-200">
               {errors.files.message as string}
             </div>
           ) : null}
-          <div className="mt-2 text-xs text-white/60">
-            {files?.length ? `${files.length} file(s) selected` : "Upload images, PDFs, mockups, or screenshots."}
+          <div className="mt-2 text-xs text-white/50">
+            {files?.length
+              ? `${files.length} file(s) selected`
+              : "Upload images, PDFs, mockups, or screenshots."}
           </div>
         </div>
       </StepPanel>
@@ -722,20 +847,20 @@ function StepReview({
         <div className="space-y-4">
           {values.existingSystem === "Yes" && values.existingSystemProblems ? (
             <div>
-              <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
+              <div className="text-xs font-semibold tracking-widest uppercase text-white/50">
                 Existing System Problems
               </div>
-              <div className="mt-2 text-sm leading-relaxed text-white/80">
+              <div className="mt-1.5 text-sm leading-relaxed text-white/80">
                 {values.existingSystemProblems}
               </div>
             </div>
           ) : null}
 
           <div>
-            <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
+            <div className="text-xs font-semibold tracking-widest uppercase text-white/50">
               Description
             </div>
-            <div className="mt-2 text-sm leading-relaxed text-white/80">
+            <div className="mt-1.5 text-sm leading-relaxed text-white/80">
               {values.description || "—"}
             </div>
           </div>
@@ -745,14 +870,14 @@ function StepReview({
       <StepPanel>
         <div className="space-y-4">
           <div>
-            <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
+            <div className="text-xs font-semibold tracking-widest uppercase text-white/50">
               Features
             </div>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div className="mt-1.5 flex flex-wrap gap-2">
               {(values.features?.length ? values.features : ["—"]).map((f) => (
                 <span
                   key={f}
-                  className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-inset ring-white/10"
+                  className="rounded-full bg-white/[0.06] px-3 py-1 text-xs font-semibold text-white/70 ring-1 ring-inset ring-white/[0.08]"
                 >
                   {f}
                 </span>
@@ -761,15 +886,15 @@ function StepReview({
           </div>
 
           <div>
-            <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
+            <div className="text-xs font-semibold tracking-widest uppercase text-white/50">
               Technical Needs
             </div>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div className="mt-1.5 flex flex-wrap gap-2">
               {(values.technicalNeeds?.length ? values.technicalNeeds : ["—"]).map(
                 (n) => (
                   <span
                     key={n}
-                    className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-inset ring-white/10"
+                    className="rounded-full bg-white/[0.06] px-3 py-1 text-xs font-semibold text-white/70 ring-1 ring-inset ring-white/[0.08]"
                   >
                     {n}
                   </span>
@@ -780,10 +905,10 @@ function StepReview({
 
           {values.files && values.files.length > 0 ? (
             <div>
-              <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
+              <div className="text-xs font-semibold tracking-widest uppercase text-white/50">
                 Files
               </div>
-              <div className="mt-2 text-sm text-white/80">
+              <div className="mt-1.5 text-sm text-white/70">
                 {values.files.length} file(s) attached
               </div>
             </div>
@@ -796,15 +921,15 @@ function StepReview({
           <input
             type="checkbox"
             {...register("agreement")}
-            className="mt-1 h-4 w-4 accent-sky-400"
+            className="mt-0.5 h-4 w-4 accent-sky-400"
           />
           <div className="min-w-0">
-            <div className="text-sm font-medium text-white/85">
+            <div className="text-sm font-medium text-white/80">
               I understand that quotations may vary depending on project scope and
               requirements.
             </div>
             {errors.agreement?.message ? (
-              <div className="mt-2 text-xs font-medium text-rose-200">
+              <div className="mt-1.5 text-xs font-medium text-rose-200">
                 {errors.agreement.message}
               </div>
             ) : null}
@@ -818,29 +943,43 @@ function StepReview({
 function Summary({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
+      <div className="text-xs font-semibold tracking-widest uppercase text-white/50">
         {label}
       </div>
-      <div className="mt-1 text-sm font-semibold text-white/90">{value}</div>
+      <div className="mt-1 text-sm font-semibold text-white/85">{value}</div>
     </div>
   );
 }
 
 function SuccessCard() {
   return (
-    <div className="space-y-3">
-      <div className="rounded-2xl bg-emerald-500/10 p-5 ring-1 ring-inset ring-emerald-300/20">
-        <div className="text-base font-semibold text-emerald-100">
-          Quote request received
-        </div>
-        <div className="mt-2 text-sm leading-relaxed text-emerald-100/80">
-          Thanks for the details. We’ll review your requirements and reach out
-          with a tailored quotation.
-        </div>
+    <div className="flex flex-1 flex-col items-center justify-center text-center">
+      <div className="grid h-16 w-16 place-items-center rounded-full bg-emerald-500/15 ring-1 ring-inset ring-emerald-300/20">
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          className="h-8 w-8 text-emerald-200"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M4.5 12.75l6 6 9-13.5"
+          />
+        </svg>
       </div>
-      <div className="rounded-2xl bg-white/5 p-5 ring-1 ring-inset ring-white/10">
-        <div className="text-sm font-semibold text-white/90">What’s next?</div>
-        <div className="mt-2 text-sm leading-relaxed text-white/75">
+      <div className="mt-5 text-lg font-bold text-emerald-100">
+        Quote request received
+      </div>
+      <div className="mt-2 max-w-sm text-sm leading-relaxed text-white/70">
+        Thanks for the details. We'll review your requirements and reach out
+        with a tailored quotation.
+      </div>
+      <div className="mt-8 w-full rounded-2xl bg-white/[0.03] px-5 py-4 ring-1 ring-inset ring-white/[0.06]">
+        <div className="text-sm font-semibold text-white/80">What's next?</div>
+        <div className="mt-1 text-sm leading-relaxed text-white/60">
           We may contact you for clarifications to ensure the quote matches your
           scope, timeline, and feature needs.
         </div>
@@ -863,13 +1002,11 @@ function Field({
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between gap-2">
-        <label className="text-xs font-semibold tracking-widest uppercase text-white/60">
+        <label className="text-xs font-semibold tracking-widest uppercase text-white/50">
           {label}
         </label>
         {required ? (
-          <span className="text-[11px] font-semibold text-white/40">
-            Required
-          </span>
+          <span className="text-[11px] font-semibold text-white/35">Required</span>
         ) : null}
       </div>
       {input}
@@ -881,39 +1018,7 @@ function Field({
 }
 
 const inputClass =
-  "w-full rounded-xl bg-white/6 px-4 py-3 text-sm leading-relaxed text-white/90 ring-1 ring-inset ring-white/12 outline-none transition-colors placeholder:text-white/35 focus:bg-white/8 focus:ring-sky-300/25";
-
-function FormProgressHeader({
-  title,
-  stepIndex,
-  totalSteps,
-  progress,
-}: {
-  title: string;
-  stepIndex: number;
-  totalSteps: number;
-  progress: number;
-}) {
-  return (
-    <div className="sticky top-0 z-20 rounded-2xl bg-white/6 px-5 py-4 ring-1 ring-inset ring-white/10 backdrop-blur-md">
-      <div className="flex items-center justify-between gap-3">
-        <div className="text-sm font-semibold text-white/90">{title}</div>
-        <div className="text-xs font-semibold text-white/60">
-          {stepIndex + 1} / {totalSteps}
-        </div>
-      </div>
-
-      <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
-        <motion.div
-          className="h-full rounded-full bg-gradient-to-r from-sky-400 to-indigo-400"
-          initial={false}
-          animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.35, ease: "easeOut" }}
-        />
-      </div>
-    </div>
-  );
-}
+  "w-full rounded-xl bg-white/[0.05] px-4 py-3 text-sm leading-relaxed text-white/90 ring-1 ring-inset ring-white/[0.10] outline-none transition-all duration-200 placeholder:text-white/30 hover:bg-white/[0.07] focus:bg-white/[0.07] focus:ring-2 focus:ring-sky-400/40 focus:scale-[1.01]";
 
 function MiniCheck({ className }: { className?: string }) {
   return (
@@ -932,20 +1037,9 @@ function MiniCheck({ className }: { className?: string }) {
   );
 }
 
-function StepPanel({
-  children,
-  size = "default",
-}: {
-  children: React.ReactNode;
-  size?: "default" | "tall";
-}) {
+function StepPanel({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className={cn(
-        "rounded-2xl bg-white/5 p-5 ring-1 ring-inset ring-white/8",
-        size === "tall" && "min-h-[420px]",
-      )}
-    >
+    <div className="rounded-2xl bg-white/[0.04] px-4 py-5 ring-1 ring-inset ring-white/[0.06] transition-all duration-200 hover:bg-white/[0.05]">
       {children}
     </div>
   );

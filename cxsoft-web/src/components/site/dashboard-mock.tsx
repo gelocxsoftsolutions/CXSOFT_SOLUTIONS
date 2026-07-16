@@ -25,7 +25,7 @@ export function DashboardMock({ className }: { className?: string }) {
       <div className="grid gap-3 p-4">
         <div className="grid grid-cols-3 gap-3">
           <MetricCard title="Total Orders" value="2,847" delta="+2.5%" />
-          <MetricCard title="Revenue" value="$184K" delta="+8.2%" />
+          <MetricCard title="Revenue" value="₱184K" delta="+8.2%" />
           <MetricCard title="Active Users" value="1,205" delta="+3.1%" />
         </div>
 
@@ -62,9 +62,9 @@ export function DashboardMock({ className }: { className?: string }) {
             <div className="text-xs font-semibold text-white/40">Today</div>
           </div>
           <div className="divide-y divide-white/10">
-            <OrderRow id="#A021" status="Delivered" amount="$1,240" />
-            <OrderRow id="#A020" status="In Transit" amount="$890" />
-            <OrderRow id="#A019" status="Processing" amount="$2,100" />
+            <OrderRow id="#A021" status="Delivered" amount="₱1,240" />
+            <OrderRow id="#A020" status="In Transit" amount="₱890" />
+            <OrderRow id="#A019" status="Processing" amount="₱2,100" />
           </div>
         </div>
       </div>
