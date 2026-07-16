@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase } from "~/lib/supabase";
+import { sendQuoteNotification } from "~/lib/email";
 
 export async function POST(request: Request) {
   try {
@@ -14,6 +15,8 @@ export async function POST(request: Request) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    await sendQuoteNotification(body);
 
     return NextResponse.json({ data }, { status: 201 });
   } catch {
