@@ -36,12 +36,21 @@ export function SiteFooter() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3 md:justify-end">
-            <ButtonLink href="mailto:hello@cxsoftsolutions.com" variant="primary">
+          <div className="flex flex-wrap items-center gap-3 md:justify-end">
+            <a
+              href="tel:+639087510290"
+              className="inline-flex h-10 items-center gap-2 rounded-md bg-white/10 px-4 text-sm font-semibold text-white ring-1 ring-inset ring-white/20 transition-colors hover:bg-white/15"
+            >
+              <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                <path fillRule="evenodd" d="M2 3.5A1.5 1.5 0 013.5 2h1.148a1.5 1.5 0 011.465 1.175l.716 3.223a1.5 1.5 0 01-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 006.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 011.767-1.052l3.223.716A1.5 1.5 0 0118 15.352V16.5a1.5 1.5 0 01-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 012.43 8.326 13.019 13.019 0 012 5V3.5z" clipRule="evenodd" />
+              </svg>
+              0908 751 0290
+            </a>
+            <ButtonLink href="mailto:cxsoftsolutions@gmail.com" variant="primary">
               Email Us
             </ButtonLink>
-            <ButtonLink href="#solutions" variant="secondary">
-              Explore Solutions
+            <ButtonLink href="/quote" variant="secondary">
+              Get a Quote
             </ButtonLink>
           </div>
         </div>

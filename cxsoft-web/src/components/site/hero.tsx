@@ -24,8 +24,8 @@ export function Hero() {
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <ButtonLink href="#contact" variant="primary" size="md">
-                Book a Demo
+              <ButtonLink href="/quote" variant="primary" size="md">
+                Get a Free Quote
                 <ArrowRight />
               </ButtonLink>
               <ButtonLink href="#solutions" variant="secondary" size="md">

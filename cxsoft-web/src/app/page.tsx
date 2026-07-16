@@ -69,8 +69,8 @@ export default function HomePage() {
               Recent work
             </h2>
             <p className="mt-4 text-base leading-relaxed text-slate-600">
-              A snapshot of the kinds of systems we build. Replace these with
-              real case studies as they’re ready.
+              Real systems we've built for real businesses — from inventory
+              management to booking platforms.
             </p>
           </div>
 
@@ -127,14 +127,17 @@ export default function HomePage() {
               {
                 title: "What makes an internal tool actually usable?",
                 meta: "Product • 5 min read",
+                text: "Key principles for building software your team will actually want to use every day.",
               },
               {
                 title: "Automations that pay for themselves quickly",
                 meta: "Ops • 4 min read",
+                text: "How small businesses can automate repetitive tasks without breaking the bank.",
               },
               {
                 title: "Reducing support tickets with better UX",
                 meta: "CX • 6 min read",
+                text: "Simple UI improvements that cut customer inquiries and improve satisfaction.",
               },
             ].map((post) => (
               <div
@@ -147,8 +150,8 @@ export default function HomePage() {
                 <div className="mt-3 text-base font-semibold text-slate-900">
                   {post.title}
                 </div>
-                <div className="mt-3 text-sm text-slate-600">
-                  Coming soon.
+                <div className="mt-3 text-sm leading-relaxed text-slate-600">
+                  {post.text}
                 </div>
               </div>
             ))}
@@ -166,8 +169,17 @@ export default function HomePage() {
               Simple, clear pricing
             </h2>
             <p className="mt-4 text-base leading-relaxed text-slate-600">
-              Pricing options will be listed here.
+              Transparent pricing tailored to your project scope. Request a free
+              quote and we'll provide a clear estimate within 48 hours.
             </p>
+            <div className="mt-8">
+              <a
+                href="/quote"
+                className="inline-flex h-11 items-center justify-center rounded-md bg-sky-500 px-5 text-sm font-semibold text-white shadow-sm shadow-black/10 transition-colors hover:bg-sky-400 active:bg-sky-600"
+              >
+                Request a Free Quote
+              </a>
+            </div>
           </div>
         </Container>
       </Section>
