@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
+import { ScrollToTop } from "~/components/ui/scroll-to-top";
 
 export const metadata: Metadata = {
   title: "CXSOFT SOLUTIONS — Custom Software Development Philippines",
@@ -25,6 +26,7 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable}`}>
       <body className="min-h-screen bg-slate-50 font-sans antialiased">
         {children}
+        <ScrollToTop />
       </body>
     </html>
   );
