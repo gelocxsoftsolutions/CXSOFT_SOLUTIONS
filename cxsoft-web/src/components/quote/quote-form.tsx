@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "~/components/ui/button";
 import { DropdownSelect } from "~/components/ui/dropdown-select";
 import { cn } from "~/lib/cn";
+import { supabaseClient } from "~/lib/supabase-client";
 import {
   budgetSchema,
   designStyleSchema,
@@ -112,11 +113,42 @@ export function QuoteForm() {
   async function onSubmit(v: QuoteFormValues) {
     setSubmitError(null);
     try {
-      await new Promise((r) => setTimeout(r, 900));
-      void toSupabaseQuote(v);
+      let fileUrls: string[] = [];
+
+      if (v.files && v.files.length > 0) {
+        const uploaded = await Promise.all(
+          v.files.map(async (file) => {
+            const path = `${crypto.randomUUID()}-${file.name}`;
+            const { error } = await supabaseClient.storage
+              .from("quote-files")
+              .upload(path, file);
+            if (error) throw error;
+            const { data: urlData } = supabaseClient.storage
+              .from("quote-files")
+              .getPublicUrl(path);
+            return urlData.publicUrl;
+          }),
+        );
+        fileUrls = uploaded;
+      }
+
+      const payload = toSupabaseQuote(v, fileUrls);
+      const res = await fetch("/api/quotes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error ?? "Failed to submit");
+      }
+
       setSubmitted(true);
-    } catch {
-      setSubmitError("Something went wrong. Please try again.");
+    } catch (e) {
+      setSubmitError(
+        e instanceof Error ? e.message : "Something went wrong. Please try again.",
+      );
     }
   }
 
@@ -675,31 +707,87 @@ function StepReview({
           <Summary label="Location" value={values.location || "—"} />
           <Summary label="Contact Method" value={values.preferredContactMethod} />
           <Summary label="Project Type" value={values.projectType} />
+          <Summary label="Industry" value={values.industry || "—"} />
+          <Summary label="Employees" value={values.employees || "—"} />
+          <Summary label="Daily Users" value={values.dailyUsers || "—"} />
+          <Summary label="Existing System" value={values.existingSystem} />
           <Summary label="Budget" value={values.budget} />
           <Summary label="Timeline" value={values.timeline} />
+          <Summary label="Has Branding" value={values.hasBranding} />
+          <Summary label="Design Style" value={values.designStyle} />
         </div>
-        <div className="mt-4">
-          <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
-            Description
-          </div>
-          <div className="mt-2 text-sm leading-relaxed text-white/80">
-            {values.description || "—"}
+      </StepPanel>
+
+      <StepPanel>
+        <div className="space-y-4">
+          {values.existingSystem === "Yes" && values.existingSystemProblems ? (
+            <div>
+              <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
+                Existing System Problems
+              </div>
+              <div className="mt-2 text-sm leading-relaxed text-white/80">
+                {values.existingSystemProblems}
+              </div>
+            </div>
+          ) : null}
+
+          <div>
+            <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
+              Description
+            </div>
+            <div className="mt-2 text-sm leading-relaxed text-white/80">
+              {values.description || "—"}
+            </div>
           </div>
         </div>
-        <div className="mt-4">
-          <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
-            Features
+      </StepPanel>
+
+      <StepPanel>
+        <div className="space-y-4">
+          <div>
+            <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
+              Features
+            </div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {(values.features?.length ? values.features : ["—"]).map((f) => (
+                <span
+                  key={f}
+                  className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-inset ring-white/10"
+                >
+                  {f}
+                </span>
+              ))}
+            </div>
           </div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {(values.features?.length ? values.features : ["—"]).map((f) => (
-              <span
-                key={f}
-                className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-inset ring-white/10"
-              >
-                {f}
-              </span>
-            ))}
+
+          <div>
+            <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
+              Technical Needs
+            </div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {(values.technicalNeeds?.length ? values.technicalNeeds : ["—"]).map(
+                (n) => (
+                  <span
+                    key={n}
+                    className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80 ring-1 ring-inset ring-white/10"
+                  >
+                    {n}
+                  </span>
+                ),
+              )}
+            </div>
           </div>
+
+          {values.files && values.files.length > 0 ? (
+            <div>
+              <div className="text-xs font-semibold tracking-widest uppercase text-white/60">
+                Files
+              </div>
+              <div className="mt-2 text-sm text-white/80">
+                {values.files.length} file(s) attached
+              </div>
+            </div>
+          ) : null}
         </div>
       </StepPanel>
 

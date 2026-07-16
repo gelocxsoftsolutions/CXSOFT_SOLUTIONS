@@ -1,5 +1,3 @@
-"use client";
-
 import { z } from "zod";
 
 export const preferredContactMethodSchema = z.enum([
@@ -106,29 +104,56 @@ export const quoteSchema = z.object({
 export type QuoteFormValues = z.infer<typeof quoteSchema>;
 
 export type QuoteInsert = {
-  id?: string;
   full_name: string;
   company_name: string | null;
   email: string;
   phone: string | null;
-  project_type: QuoteFormValues["projectType"];
-  features: QuoteFormValues["features"];
-  budget: QuoteFormValues["budget"];
-  timeline: QuoteFormValues["timeline"];
+  location: string | null;
+  preferred_contact_method: string;
+  project_type: string;
   description: string;
-  created_at?: string;
+  features: string[];
+  industry: string | null;
+  employees: string | null;
+  daily_users: string | null;
+  existing_system: string;
+  existing_system_problems: string | null;
+  budget: string;
+  timeline: string;
+  has_branding: string;
+  design_style: string;
+  technical_needs: string[];
+  file_urls: string[];
+  agreement: boolean;
 };
 
-export function toSupabaseQuote(values: QuoteFormValues): QuoteInsert {
+export function toSupabaseQuote(
+  values: QuoteFormValues,
+  fileUrls: string[] = [],
+): QuoteInsert {
   return {
     full_name: values.fullName,
     company_name: values.companyName?.trim() ? values.companyName.trim() : null,
     email: values.email,
     phone: values.phone?.trim() ? values.phone.trim() : null,
+    location: values.location?.trim() ? values.location.trim() : null,
+    preferred_contact_method: values.preferredContactMethod,
     project_type: values.projectType,
+    description: values.description,
     features: values.features,
+    industry: values.industry?.trim() ? values.industry.trim() : null,
+    employees: values.employees?.trim() ? values.employees.trim() : null,
+    daily_users: values.dailyUsers?.trim() ? values.dailyUsers.trim() : null,
+    existing_system: values.existingSystem,
+    existing_system_problems: values.existingSystemProblems?.trim()
+      ? values.existingSystemProblems.trim()
+      : null,
     budget: values.budget,
     timeline: values.timeline,
-    description: values.description,
+    has_branding: values.hasBranding,
+    design_style: values.designStyle,
+    technical_needs: values.technicalNeeds,
+    file_urls: fileUrls,
+    agreement: values.agreement,
   };
 }

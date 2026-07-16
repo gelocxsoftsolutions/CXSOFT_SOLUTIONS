@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { ButtonLink } from "~/components/ui/button";
@@ -9,9 +10,13 @@ export function SiteFooter() {
       <Container className="py-16">
         <div className="grid gap-10 md:grid-cols-2 md:items-center">
           <div>
-            <div className="text-sm font-semibold tracking-widest text-white/60">
-              CXSOFT SOLUTIONS
-            </div>
+            <Image
+              src="/cxsoftlogo.png"
+              alt="CXSOFT SOLUTIONS"
+              width={120}
+              height={36}
+              className="h-8 w-auto object-contain brightness-[10] contrast-75"
+            />
             <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
               Ready to build something great?
             </h2>

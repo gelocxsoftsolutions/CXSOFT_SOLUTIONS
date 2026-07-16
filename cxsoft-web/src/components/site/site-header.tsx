@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import * as React from "react";
 
@@ -109,17 +110,14 @@ const navItems = [
 function Logo({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <div className="grid h-9 w-9 place-items-center rounded-md bg-sky-500/15 ring-1 ring-inset ring-sky-300/20">
-        <div className="h-3.5 w-3.5 rounded-sm bg-sky-400 shadow-sm shadow-sky-500/30" />
-      </div>
-      <div className="leading-tight">
-        <div className="text-sm font-bold tracking-wide text-white">
-          CXSOFT
-        </div>
-        <div className="text-xs font-semibold tracking-widest text-white/70">
-          SOLUTIONS
-        </div>
-      </div>
+      <Image
+        src="/cxsoftlogo.png"
+        alt="CXSOFT SOLUTIONS"
+        width={120}
+        height={36}
+        className="h-9 w-auto object-contain"
+        priority
+      />
     </div>
   );
 }
