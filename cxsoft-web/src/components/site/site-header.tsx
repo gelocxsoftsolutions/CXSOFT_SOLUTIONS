@@ -132,9 +132,9 @@ function Logo({ className }: { className?: string }) {
 
 export function SiteHeader() {
   const [activeMenu, setActiveMenu] = React.useState<string | null>(null);
-  const closeTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileDropdown, setMobileDropdown] = React.useState<string | null>(null);
+  const closeTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const expanded = activeMenu !== null;
 
@@ -154,10 +154,20 @@ export function SiteHeader() {
     closeTimeoutRef.current = setTimeout(() => setActiveMenu(null), 120);
   }, [cancelClose]);
 
+  React.useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
   return (
     <header className="fixed inset-x-0 top-0 z-50">
       <div className="bg-transparent py-3">
         <Container className="max-w-7xl">
+          {/* Desktop header bar */}
           <div
             className={cn(
               "relative w-full overflow-hidden rounded-2xl bg-slate-800/60 backdrop-blur-xl ring-1 ring-inset ring-white/15 shadow-lg shadow-black/25 transition-[height] duration-200",
@@ -169,8 +179,8 @@ export function SiteHeader() {
               setActiveMenu(null);
             }}
           >
-            <div className="flex h-[72px] items-center justify-between px-8">
-              <Link href="/#top" className="shrink-0">
+            <div className="flex h-[72px] items-center justify-between px-4 sm:px-8">
+              <Link href="/#top" className="shrink-0" onClick={() => setMobileOpen(false)}>
                 <Logo />
               </Link>
 
@@ -203,12 +213,30 @@ export function SiteHeader() {
                 ))}
               </nav>
 
-              <ButtonLink href="/quote" variant="primary" size="sm">
-                Get a Quote
-              </ButtonLink>
+              <div className="flex items-center gap-2">
+                <ButtonLink href="/quote" variant="primary" size="sm" className="hidden sm:inline-flex">
+                  Get a Quote
+                </ButtonLink>
+                <button
+                  type="button"
+                  className="grid h-9 w-9 place-items-center rounded-lg bg-white/10 text-white md:hidden"
+                  onClick={() => setMobileOpen((v) => !v)}
+                  aria-label={mobileOpen ? "Close menu" : "Open menu"}
+                >
+                  {mobileOpen ? (
+                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                  ) : (
+                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
 
-            <div className="absolute inset-x-0 top-[72px]">
+            <div className="absolute inset-x-0 top-[72px] hidden md:block">
               <Container className="max-w-7xl px-8">
                 <div
                   className={cn(
@@ -229,6 +257,80 @@ export function SiteHeader() {
             </div>
           </div>
         </Container>
+      </div>
+
+      {/* Mobile menu overlay */}
+      <div
+        className={cn(
+          "fixed inset-x-0 top-0 z-40 transition-all duration-300 md:hidden",
+          mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
+        )}
+      >
+        <div
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          onClick={() => setMobileOpen(false)}
+        />
+        <div
+          className={cn(
+            "relative mt-[84px] mx-3 rounded-2xl bg-slate-800/95 backdrop-blur-xl ring-1 ring-inset ring-white/15 shadow-xl shadow-black/40 transition-all duration-300",
+            mobileOpen ? "translate-y-0" : "-translate-y-4",
+          )}
+        >
+          <nav className="flex flex-col gap-1 px-4 py-4">
+            {navItems.map((item) => {
+              const hasDropdown = "dropdown" in item;
+              const isOpen = mobileDropdown === item.label;
+              return (
+                <div key={item.label}>
+                  {hasDropdown ? (
+                    <button
+                      type="button"
+                      onClick={() => setMobileDropdown(isOpen ? null : item.label)}
+                      className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                    >
+                      {item.label}
+                      <svg
+                        aria-hidden="true"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        className={cn("h-4 w-4 transition-transform duration-200", isOpen && "rotate-180")}
+                      >
+                        <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="block rounded-xl px-4 py-3 text-sm font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                    >
+                      {item.label}
+                    </Link>
+                  )}
+                  {hasDropdown && isOpen && (
+                    <div className="ml-4 mt-1 mb-2 flex flex-col gap-1 rounded-xl bg-white/5 p-2">
+                      {(item as any).dropdown.map((link: any) => (
+                        <Link
+                          key={link.label}
+                          href={link.href}
+                          onClick={() => { setMobileOpen(false); setMobileDropdown(null); }}
+                          className="rounded-lg px-4 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                        >
+                          {link.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            <div className="mt-2 border-t border-white/10 pt-3">
+              <ButtonLink href="/quote" variant="primary" size="md" className="w-full justify-center">
+                Get a Quote
+              </ButtonLink>
+            </div>
+          </nav>
+        </div>
       </div>
     </header>
   );
